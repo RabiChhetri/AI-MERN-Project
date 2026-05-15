@@ -23,3 +23,17 @@ async function googleAuth(req,res){
         return res.status(500).json({message:'Internal Server Error'})
     }
 }
+
+async function logOut(req,res) {
+    try {
+        return res.clearCookie('token',{
+            httpOnly:true,
+            secure:false,
+            sameSite:'strict',
+        })
+    } catch (error) {
+        return res.status(500).json({message:'Internal Server Error'})
+    }
+}
+
+module.exports={googleAuth,logOut}
