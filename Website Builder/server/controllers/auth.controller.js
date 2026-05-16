@@ -1,5 +1,6 @@
 const userModel=require('../models/user.model')
 const jwt=require('jsonwebtoken')
+
 async function googleAuth(req,res){
     try{
         const {name,email,avata}=req.body
@@ -23,6 +24,7 @@ async function googleAuth(req,res){
         return res.status(500).json({message:'Internal Server Error'})
     }
 }
+
 
 async function logOut(req,res) {
     try {
