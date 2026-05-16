@@ -1,7 +1,20 @@
 import React from "react";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../firebase";
 
-const LoginModal = ({ open, onClose }) => {
+function LoginModal({ open, onClose }) {
   if (!open) return null;
+
+  const handleGoogleAuth =async () => {
+    try{
+        const result = await signInWithPopup(auth, provider);
+        console.log(result);
+    }
+    catch(error){
+        console.error("Google Sign-In Error:", error);
+    }
+  }
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xl">
@@ -40,7 +53,7 @@ const LoginModal = ({ open, onClose }) => {
         </p>
 
         {/* Google */}
-        <button className="w-full flex items-center justify-center gap-3 py-3 rounded-xl bg-white text-black font-medium hover:scale-[1.02] transition shadow-lg">
+        <button onClick={handleGoogleAuth} className="w-full flex items-center justify-center gap-3 py-3 rounded-xl bg-white text-black font-medium hover:scale-[1.02] transition shadow-lg">
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             className="w-5 h-5"
@@ -63,6 +76,6 @@ const LoginModal = ({ open, onClose }) => {
       </div>
     </div>
   );
-};
+}
 
 export default LoginModal;
