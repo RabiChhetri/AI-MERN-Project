@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import LoginModal from "../components/LoginModel";
 
 const Home = () => {
   const highlights = [
@@ -7,6 +8,8 @@ const Home = () => {
     "Fully Responsive Layouts",
     "Production Ready Output",
   ];
+
+  const [openLogin, setOpenLogin] = useState(false);
 
   return (
     <div className="relative min-h-screen bg-[#040404] text-white overflow-hidden">
@@ -31,7 +34,11 @@ const Home = () => {
               Pricing
             </button>
 
-            <button className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-sm font-medium hover:scale-105 transition duration-300 shadow-lg shadow-purple-500/20">
+            {/* FIXED: onClick */}
+            <button
+              onClick={() => setOpenLogin(true)}
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-sm font-medium hover:scale-105 transition duration-300 shadow-lg shadow-purple-500/20"
+            >
               Get Started
             </button>
           </div>
@@ -71,14 +78,17 @@ const Home = () => {
           production-ready websites in seconds. No coding required.
         </motion.p>
 
-        {/* Button */}
+        {/* Hero Button */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.7 }}
           className="mt-12 flex items-center justify-center"
         >
-          <button className="px-10 py-4 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition duration-300 shadow-xl">
+          <button
+            onClick={() => setOpenLogin(true)}
+            className="px-10 py-4 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition duration-300 shadow-xl"
+          >
             Get Started
           </button>
         </motion.div>
@@ -130,8 +140,6 @@ const Home = () => {
               whileHover={{ y: -8 }}
               className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl p-8 hover:border-purple-500/40 transition duration-300"
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-purple-500/10 to-blue-500/10 transition duration-300" />
-
               <div className="relative z-10">
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-2xl mb-6 shadow-lg shadow-purple-500/20">
                   ✨
@@ -149,10 +157,11 @@ const Home = () => {
           ))}
         </div>
       </section>
+
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 bg-black/40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-center md:text-left">
+          <div>
             <h1 className="text-lg font-bold">
               GenWeb<span className="text-purple-400">.ai</span>
             </h1>
@@ -162,13 +171,9 @@ const Home = () => {
           </div>
 
           <div className="flex gap-6 text-sm text-zinc-400">
-            <a className="hover:text-white transition cursor-pointer">
-              Privacy
-            </a>
+            <a className="hover:text-white transition cursor-pointer">Privacy</a>
             <a className="hover:text-white transition cursor-pointer">Terms</a>
-            <a className="hover:text-white transition cursor-pointer">
-              Contact
-            </a>
+            <a className="hover:text-white transition cursor-pointer">Contact</a>
           </div>
 
           <div className="text-xs text-zinc-500">
@@ -176,6 +181,12 @@ const Home = () => {
           </div>
         </div>
       </footer>
+
+      {/* MODAL */}
+      <LoginModal
+        open={openLogin}
+        onClose={() => setOpenLogin(false)}
+      />
     </div>
   );
 };
