@@ -5,9 +5,10 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
-
 const authRouter = require("./routers/auth.route");
+const userRouter = require("./routers/user.route");
+
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 // TEST ROUTE
 app.get("/", (req, res) => {
