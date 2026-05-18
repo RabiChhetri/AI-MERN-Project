@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import LoginModal from "../components/LoginModel";
+import { useSelector } from "react-redux";
+import { Coins } from "lucide-react";
 
 const Home = () => {
   const highlights = [
@@ -10,6 +12,8 @@ const Home = () => {
   ];
 
   const [openLogin, setOpenLogin] = useState(false);
+  const { userData } = useSelector((state) => state.user);
+  const [openProfile, setOpenProfile] = useState(false);
 
   return (
     <div className="relative min-h-screen bg-[#040404] text-white overflow-hidden">
@@ -24,28 +28,128 @@ const Home = () => {
         transition={{ duration: 0.6 }}
         className="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl bg-black/30 border-b border-white/10"
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold tracking-wide">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          {/* Logo */}
+          <h1 className="text-lg sm:text-xl font-bold tracking-wide flex-shrink-0">
             GenWeb<span className="text-purple-400">.ai</span>
           </h1>
 
-          <div className="flex items-center gap-4 md:gap-6">
+          {/* Right Section */}
+          <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
+            {/* Pricing */}
             <button className="hidden sm:block text-sm text-zinc-400 hover:text-white transition">
               Pricing
             </button>
 
-            <button
-              onClick={() => setOpenLogin(true)}
-              className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-sm font-medium hover:scale-105 transition duration-300 shadow-lg shadow-purple-500/20"
-            >
-              Get Started
-            </button>
+            {/* Credits */}
+            {userData && (
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="
+                flex items-center gap-2
+                px-2.5 py-1.5 sm:px-4 sm:py-2
+                rounded-xl sm:rounded-2xl
+                bg-white/5 border border-white/10 backdrop-blur-xl
+                shadow-lg shadow-yellow-500/10
+                hover:border-yellow-400/30
+                transition-all duration-300
+                "
+              >
+                {/* Coin Icon */}
+                <div
+                  className="
+                  w-7 h-7 sm:w-9 sm:h-9
+                  rounded-lg sm:rounded-xl
+                  bg-gradient-to-br from-yellow-400 to-orange-500
+                  flex items-center justify-center
+                  shadow-md
+                  "
+                >
+                  <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </div>
+
+                {/* Credits Text */}
+                <div className="flex flex-col leading-tight">
+                  <span className="hidden sm:block text-[11px] uppercase tracking-wide text-zinc-400">
+                    Credits
+                  </span>
+
+                  <span className="text-xs sm:text-sm font-semibold text-white">
+                    {userData?.credits || 100}+
+                  </span>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Login Button or Avatar */}
+            {!userData ? (
+              <button
+                onClick={() => setOpenLogin(true)}
+                className="
+                px-3 py-2 sm:px-5
+                rounded-xl
+                bg-gradient-to-r from-blue-500 to-purple-600
+                text-xs sm:text-sm
+                font-medium
+                hover:scale-105
+                transition duration-300
+                shadow-lg shadow-purple-500/20
+                "
+              >
+                Get Started
+              </button>
+            ) : (
+              <div className="relative">
+                <button
+                  className="group relative flex-shrink-0"
+                  onClick={() => setOpenProfile(!openProfile)}
+                >
+                  <img
+                    className="
+                  w-9 h-9 sm:w-10 sm:h-10
+                  rounded-full border border-white/20
+                  object-cover
+                  group-hover:scale-105
+                  transition duration-300
+                  "
+                    src={
+                      userData?.avatar ||
+                      `https://ui-avatars.com/api/?name=${userData?.name}`
+                    }
+                    alt="user avatar"
+                  />
+                </button>
+                <AnimatePresence>
+                  {openProfile && (
+                    <>
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-60 z-50 rounded-xl bg-[#0b0b0b] border border-white/10 shadow-2xl overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-white/10">
+                          <p className="text-sm font-medium truncate">
+                            {userData.name}
+                          </p>
+                          <p className="text-xs text-zinc-500 truncate">
+                            {userData.email}
+                          </p>
+                        </div>
+                        <button className='w-full px-4 py-3 text-left text-sm hover:bg-white/5'>Dashboard</button>
+<button className='w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5'>Logout</button>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         </div>
       </motion.header>
 
       {/* Hero Section */}
-      <section className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-23 pb-28">
+      <section className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-32 pb-28">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -63,8 +167,6 @@ const Home = () => {
           className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight leading-tight max-w-5xl"
         >
           Build Stunning Websites <br />
-
-          {/* Typing Animation */}
           <motion.span
             className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent inline-block"
             initial={{ width: 0 }}
@@ -180,6 +282,7 @@ const Home = () => {
             <h1 className="text-lg font-bold">
               GenWeb<span className="text-purple-400">.ai</span>
             </h1>
+
             <p className="text-sm text-zinc-400 mt-1">
               Build websites faster with AI.
             </p>
@@ -189,9 +292,9 @@ const Home = () => {
             <a className="hover:text-white transition cursor-pointer">
               Privacy
             </a>
-            <a className="hover:text-white transition cursor-pointer">
-              Terms
-            </a>
+
+            <a className="hover:text-white transition cursor-pointer">Terms</a>
+
             <a className="hover:text-white transition cursor-pointer">
               Contact
             </a>
@@ -203,11 +306,8 @@ const Home = () => {
         </div>
       </footer>
 
-      {/* Modal */}
-      <LoginModal
-        open={openLogin}
-        onClose={() => setOpenLogin(false)}
-      />
+      {/* Login Modal */}
+      <LoginModal open={openLogin} onClose={() => setOpenLogin(false)} />
     </div>
   );
 };
