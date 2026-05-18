@@ -1,6 +1,8 @@
 import React from "react";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../firebase";
+import axios from "axios";
+import { serverUrl } from "../config";
 
 function LoginModal({ open, onClose }) {
   if (!open) return null;
@@ -8,10 +10,16 @@ function LoginModal({ open, onClose }) {
   const handleGoogleAuth =async () => {
     try{
         const result = await signInWithPopup(auth, provider);
-        console.log(result);
-    }
+        const {data} =await  axios.post(`${serverUrl}/api/auth/google`,{
+            name:result.user.displayName,
+            email:result.user.email,  
+            avatar:result.user.photoURL
+        },{withCredentials:true})
+        console.log("Server Response:",data);
+        onClose();
+  }
     catch(error){
-        console.error("Google Sign-In Error:", error);
+        console.error(error);
     }
   }
 
