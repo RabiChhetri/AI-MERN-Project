@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import LoginModal from "../components/LoginModel";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Coins } from "lucide-react";
+import axios from "axios";
+import { serverUrl } from "../config";
+import { setUserData } from "../redux/userSlice";
 
 const Home = () => {
   const highlights = [
@@ -12,8 +15,32 @@ const Home = () => {
   ];
 
   const [openLogin, setOpenLogin] = useState(false);
-  const { userData } = useSelector((state) => state.user);
   const [openProfile, setOpenProfile] = useState(false);
+
+  const { userData } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    console.log("Logout clicked");
+
+    try {
+      await axios.post(
+        `${serverUrl}/api/auth/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+
+      dispatch(setUserData(null));
+      setOpenProfile(false);
+
+      console.log("Logout successful");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="relative min-h-screen bg-[#040404] text-white overflow-hidden">
@@ -105,41 +132,48 @@ const Home = () => {
                   onClick={() => setOpenProfile(!openProfile)}
                 >
                   <img
-                    className="
-                  w-9 h-9 sm:w-10 sm:h-10
-                  rounded-full border border-white/20
-                  object-cover
-                  group-hover:scale-105
-                  transition duration-300
-                  "
-                    src={
-                      userData?.avatar ||
-                      `https://ui-avatars.com/api/?name=${userData?.name}`
-                    }
-                    alt="user avatar"
-                  />
+  className="
+  w-9 h-9 sm:w-10 sm:h-10
+  rounded-full border border-white/20
+  object-cover
+  group-hover:scale-105
+  transition duration-300
+  "
+  src={
+    userData?.user?.avatar || `https://ui-avatars.com/api/?name=${userData?.name}`
+  }
+/>
                 </button>
+
                 <AnimatePresence>
                   {openProfile && (
-                    <>
-                      <motion.div
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        className="absolute right-0 mt-3 w-60 z-50 rounded-xl bg-[#0b0b0b] border border-white/10 shadow-2xl overflow-hidden"
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      className="absolute right-0 mt-3 w-60 z-50 rounded-xl bg-[#0b0b0b] border border-white/10 shadow-2xl overflow-hidden"
+                    >
+                      <div className="px-4 py-3 border-b border-white/10">
+                        <p className="text-sm font-medium truncate">
+                          {userData.name}
+                        </p>
+
+                        <p className="text-xs text-zinc-500 truncate">
+                          {userData.email}
+                        </p>
+                      </div>
+
+                      <button className="w-full px-4 py-3 text-left text-sm hover:bg-white/5">
+                        Dashboard
+                      </button>
+
+                      <button
+                        className="w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5"
+                        onClick={handleLogout}
                       >
-                        <div className="px-4 py-3 border-b border-white/10">
-                          <p className="text-sm font-medium truncate">
-                            {userData.name}
-                          </p>
-                          <p className="text-xs text-zinc-500 truncate">
-                            {userData.email}
-                          </p>
-                        </div>
-                        <button className='w-full px-4 py-3 text-left text-sm hover:bg-white/5'>Dashboard</button>
-<button className='w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5'>Logout</button>
-                      </motion.div>
-                    </>
+                        Logout
+                      </button>
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </div>
@@ -293,7 +327,9 @@ const Home = () => {
               Privacy
             </a>
 
-            <a className="hover:text-white transition cursor-pointer">Terms</a>
+            <a className="hover:text-white transition cursor-pointer">
+              Terms
+            </a>
 
             <a className="hover:text-white transition cursor-pointer">
               Contact
