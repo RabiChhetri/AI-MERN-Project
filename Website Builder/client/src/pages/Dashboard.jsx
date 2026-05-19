@@ -50,7 +50,7 @@ function Dashboard() {
         >
           <p className="text-sm text-zinc-400 mb-1">Welcome Back</p>
           <h1 className="text-3xl font-bold">
-            {userData?.name || "User"}
+            {userData?.user?.name||userData?.name}
           </h1>
         </motion.div>
       </div>
