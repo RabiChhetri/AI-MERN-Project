@@ -65,3 +65,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# environment variables
+.env
+Website Builder/server/.env
