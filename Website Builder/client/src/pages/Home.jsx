@@ -17,12 +17,13 @@ const Home = () => {
 
   const [openLogin, setOpenLogin] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
-  const { userData } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const navigate =useNavigate()
-  const handleLogout = async () => {
-    console.log("Logout clicked");
 
+  const { userData } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
     try {
       await axios.post(
         `${serverUrl}/api/auth/logout`,
@@ -34,12 +35,19 @@ const Home = () => {
 
       dispatch(setUserData(null));
       setOpenProfile(false);
-
-      console.log("Logout successful");
     } catch (error) {
       console.log(error);
     }
   };
+
+  // FIXED USER DATA
+  const user = userData?.user || userData;
+
+  const avatar =
+    user?.avatar ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      user?.name || "User"
+    )}`;
 
   return (
     <div className="relative min-h-screen bg-[#040404] text-white overflow-hidden">
@@ -131,17 +139,16 @@ const Home = () => {
                   onClick={() => setOpenProfile(!openProfile)}
                 >
                   <img
-  className="
-  w-9 h-9 sm:w-10 sm:h-10
-  rounded-full border border-white/20
-  object-cover
-  group-hover:scale-105
-  transition duration-300
-  "
-  src={
-    userData?.user?.avatar || `https://ui-avatars.com/api/?name=${userData?.name}`
-  }
-/>
+                    className="
+                    w-9 h-9 sm:w-10 sm:h-10
+                    rounded-full border border-white/20
+                    object-cover
+                    group-hover:scale-105
+                    transition duration-300
+                    "
+                    src={avatar}
+                    alt="profile"
+                  />
                 </button>
 
                 <AnimatePresence>
@@ -154,15 +161,18 @@ const Home = () => {
                     >
                       <div className="px-4 py-3 border-b border-white/10">
                         <p className="text-sm font-medium truncate">
-                          {userData.name}
+                          {user?.name}
                         </p>
 
                         <p className="text-xs text-zinc-500 truncate">
-                          {userData.email}
+                          {user?.email}
                         </p>
                       </div>
 
-                      <button className="w-full px-4 py-3 text-left text-sm hover:bg-white/5" onClick={()=>navigate("/dashboard")}>
+                      <button
+                        className="w-full px-4 py-3 text-left text-sm hover:bg-white/5"
+                        onClick={() => navigate("/dashboard")}
+                      >
                         Dashboard
                       </button>
 
@@ -236,11 +246,12 @@ const Home = () => {
           className="mt-12 flex items-center justify-center"
         >
           <button
-            onClick={() => setOpenLogin(true)}
             className="px-10 py-4 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition duration-300 shadow-xl"
-            onClick={()=>userData ? navigate("/dashboard") : setOpenLogin(true)}
+            onClick={() =>
+              userData ? navigate("/dashboard") : setOpenLogin(true)
+            }
           >
-            {userData?"Go To Dashboard":"Get Started"}
+            {userData ? "Go To Dashboard" : "Get Started"}
           </button>
         </motion.div>
 
@@ -261,6 +272,7 @@ const Home = () => {
               className="px-6 py-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl"
             >
               <h2 className="text-2xl md:text-3xl font-bold">{num}</h2>
+
               <p className="text-zinc-400 text-sm mt-1">{text}</p>
             </div>
           ))}
