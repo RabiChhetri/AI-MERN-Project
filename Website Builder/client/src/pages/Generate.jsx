@@ -1,10 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import axios from "axios";
+
+import { serverUrl } from "../config";
+
+// ✅ ADDED IMPORTS (IMPORTANT)
+import { useDispatch, useSelector } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 function Generate() {
   const navigate = useNavigate();
+
+  // Redux
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state.user);
+
+  const [prompt, setPrompt] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleGenerateWebsite = async () => {
+    try {
+      if (!prompt) {
+        alert("Please enter a prompt");
+        return;
+      }
+
+      setLoading(true);
+
+      const result = await axios.post(
+        `${serverUrl}/api/website/gen`,
+        {
+          prompt,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log(result.data);
+
+      // ✅ FIX: UPDATE CREDITS IN REDUX
+      dispatch(
+        setUserData({
+          ...userData,
+          credits: result.data.remainingCredits,
+        })
+      );
+
+      alert("Website Generated Successfully");
+    } catch (error) {
+      console.log(error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Something went wrong"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative min-h-screen bg-[#040404] text-white overflow-hidden">
@@ -13,10 +69,11 @@ function Generate() {
       <div className="absolute top-[-150px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-purple-600/20 blur-[180px] rounded-full" />
       <div className="absolute bottom-[-120px] right-[-100px] w-[400px] h-[400px] bg-blue-500/20 blur-[150px] rounded-full" />
 
-      {/* NAVBAR (FIXED) */}
+      {/* Navbar */}
       <div className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl bg-black/60 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-4">
 
+          {/* Back Button */}
           <button
             onClick={() => navigate("/dashboard")}
             className="p-2 rounded-lg hover:bg-white/10 transition"
@@ -24,15 +81,20 @@ function Generate() {
             <ArrowLeft size={16} />
           </button>
 
-          <div className="text-lg sm:text-xl font-bold tracking-wide flex items-center">
-            GenWeb<span className="text-purple-400">.ai</span>
+          {/* Logo */}
+          <div
+            onClick={() => navigate("/")}
+            className="text-lg sm:text-xl font-bold tracking-wide flex items-center cursor-pointer select-none"
+          >
+            GenWeb
+            <span className="text-purple-400">.ai</span>
           </div>
 
         </div>
       </div>
 
-      {/* CONTENT */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-20 pb-14">
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-20 pb-8">
 
         {/* Heading */}
         <motion.h1
@@ -59,7 +121,7 @@ function Generate() {
           No coding required — just creativity.
         </motion.p>
 
-        {/* INPUT SECTION */}
+        {/* Input */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -71,12 +133,14 @@ function Generate() {
           </h2>
 
           <textarea
-            placeholder="Example: Create a modern portfolio website for a developer with dark theme, animations, and contact form..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Example: Create a modern portfolio website..."
             className="w-full h-56 p-6 rounded-3xl bg-black/60 border border-white/10 outline-none resize-none text-sm leading-relaxed focus:ring-2 focus:ring-purple-500/30 backdrop-blur-xl"
           />
         </motion.div>
 
-        {/* BUTTON */}
+        {/* Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -84,11 +148,13 @@ function Generate() {
           className="mt-6 flex justify-center"
         >
           <motion.button
+            onClick={handleGenerateWebsite}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
-            className="px-12 py-4 rounded-2xl bg-white text-black font-semibold text-lg hover:shadow-xl transition"
+            disabled={loading}
+            className="px-12 py-4 rounded-2xl bg-white text-black font-semibold text-lg hover:shadow-xl transition disabled:opacity-50"
           >
-            Generate Website
+            {loading ? "Generating..." : "Generate Website"}
           </motion.button>
         </motion.div>
 

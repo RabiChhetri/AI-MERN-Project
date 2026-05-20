@@ -7,4 +7,5 @@ const userRouter = express.Router();
 
 userRouter.get("/me",middleware.isAuth,userController.getCurrentUser)
 
+
 module.exports = userRouter;

@@ -43,4 +43,4 @@ const websiteSchema = new mongoose.Schema({
 
 const websiteModel = mongoose.model("Website",websiteSchema)
 
-module.exports = WebsiteModel
+module.exports = websiteModel

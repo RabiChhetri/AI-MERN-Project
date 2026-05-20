@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const dns = require('dns');
 const authRouter = require("./routers/auth.route");
 const userRouter = require("./routers/user.route");
-
+const websiteRouter = require("./routers/webiste.route")
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app = express();
@@ -37,6 +37,7 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/website",websiteRouter);
 
 // TEST ROUTE
 app.get("/", (req, res) => {

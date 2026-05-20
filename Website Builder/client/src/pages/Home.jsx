@@ -30,7 +30,7 @@ const Home = () => {
         {},
         {
           withCredentials: true,
-        }
+        },
       );
 
       dispatch(setUserData(null));
@@ -46,7 +46,7 @@ const Home = () => {
   const avatar =
     user?.avatar ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      user?.name || "User"
+      user?.name || "User",
     )}`;
 
   return (
@@ -108,9 +108,15 @@ const Home = () => {
                     Credits
                   </span>
 
-                  <span className="text-xs sm:text-sm font-semibold text-white">
-                    {userData?.credits || 100}+
-                  </span>
+                  <motion.span
+                    key={userData?.credits}
+                    initial={{ scale: 1.3, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-xs sm:text-sm font-semibold text-white"
+                  >
+                    {userData?.credits ?? 100}
+                  </motion.span>
                 </div>
               </motion.div>
             )}
@@ -339,9 +345,7 @@ const Home = () => {
               Privacy
             </a>
 
-            <a className="hover:text-white transition cursor-pointer">
-              Terms
-            </a>
+            <a className="hover:text-white transition cursor-pointer">Terms</a>
 
             <a className="hover:text-white transition cursor-pointer">
               Contact

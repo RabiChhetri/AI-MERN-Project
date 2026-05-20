@@ -10,10 +10,26 @@ async function isAuth(req, res, next) {
         message: "Unauthorized",
       });
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await userModel.findById(decoded.id);
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    const user = await userModel.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "User not found",
+      });
+    }
+
+    req.user = user;
+
     next();
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       message: "Internal Server Error",
     });
